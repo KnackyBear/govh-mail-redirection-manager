@@ -40,7 +40,7 @@ func init() {
 	RootCmd.PersistentFlags().StringVar(&OptTo, "to", "", "mail to")
 
 	viper.SetDefault("author", "Julien Vinet <contact@julienvinet.dev>")
-	viper.SetDefault("license", "MIT")
+	viper.SetDefault("license", "GNU GENERAL PUBLIC LICENSE")
 }
 
 func initConfig() {
