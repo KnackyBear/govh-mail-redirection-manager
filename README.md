@@ -62,4 +62,4 @@ Julien Vinet <contact@julienvinet.dev>
 
 ## License
 
-GNU GENERAL PUBLIC LICENSE Version 3
+The source and documentation in this project are released under the [GNU general public license](https://github.com/julienvinet/govh-mail-redirection-manager/blob/main/LICENSE)
