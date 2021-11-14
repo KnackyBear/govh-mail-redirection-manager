@@ -25,4 +25,3 @@ jobs:
         with:
           # upload any assets to your github release
           upload_assets: 'govh-mrm-linux-amd64'
-          version_metadata_path: './VERSION'
