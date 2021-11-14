@@ -4,13 +4,11 @@ go 1.17
 
 require (
 	github.com/mitchellh/go-homedir v1.1.0
+	github.com/ovh/go-ovh v1.1.0
 	github.com/spf13/viper v1.9.0
 )
 
-require (
-	github.com/inconshreveable/mousetrap v1.0.0 // indirect
-	github.com/ovh/go-ovh v1.1.0 // indirect
-)
+require github.com/inconshreveable/mousetrap v1.0.0 // indirect
 
 require (
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
