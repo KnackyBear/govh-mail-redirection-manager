@@ -22,7 +22,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          author_mail: 'contact@julienvinet.dev'
+          author_email: 'contact@julienvinet.dev'
           author_name: 'Julien Vinet'
       - name: Publish Release
         id: publish
@@ -31,5 +31,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_assets: 'govh-mrm-linux-amd64'
-          author_mail: 'contact@julienvinet.dev'
+          author_email: 'contact@julienvinet.dev'
           author_name: 'Julien Vinet'
