@@ -21,7 +21,6 @@ jobs:
           cp -a $GITHUB_WORKSPACE/* $PROJECT_PATH/
           cd $PROJECT_PATH
           go mod vendor
-          go test -v -tags "static" $(go list ./... | grep -v /vendor/)
           go build -ldflags "-X main.goos=linux -X main.goarch=amd64" -o govh-mrm-linux-amd64 -tags "static" main.go
           chmod +x govh-mrm-linux-amd64
           .govh-mrm-linux-amd64 --help
