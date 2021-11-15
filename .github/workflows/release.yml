@@ -1,0 +1,60 @@
+name: Release
+# This workflow is triggered manually
+on:
+  workflow_dispatch:
+    inputs:
+      version_bump_type:
+        description: 'Version Bump Type (major, minor, patch)'
+        required: true
+        default: 'patch'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: golang:1.17.3
+    env:
+      PROJECT_PATH: /go/src/github.com/julienvinet/govh-mrm
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Bump version
+        id: bump_version
+        uses: packagrio/action-bumpr-go@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          version_bump_type: ${{ github.event.inputs.version_bump_type }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          author_email: 'contact@julienvinet.dev'
+          author_name: 'Julien Vinet'
+      - name: Build
+        env:
+          GOOS: linux
+          GOARCH: amd64
+        run: |
+          mkdir -p $PROJECT_PATH
+          cp -a $GITHUB_WORKSPACE/* $PROJECT_PATH/
+          cd $PROJECT_PATH
+          go mod vendor
+          go test -v -tags "static" $(go list ./... | grep -v /vendor/)
+          go build -ldflags "-X main.goos=linux -X main.goarch=amd64" -o govh-mrm-linux-amd64 -tags "static" main.go
+          chmod +x govh-mrm-linux-amd64
+          ./govh-mrm-linux-amd64 --help
+      - name: Commit Changes
+        id: commit
+        uses: packagrio/action-releasr-go@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          author_email: 'contact@julienvinet.dev'
+          author_name: 'Julien Vinet'
+      - name: Publish Release
+        id: publish
+        uses: packagrio/action-publishr-go@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_assets: 'govh-mrm-linux-amd64'
+          author_email: 'contact@julienvinet.dev'
+          author_name: 'Julien Vinet'
