@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"errors"
 	"fmt"
 	"net/url"
 	"strings"
@@ -9,16 +8,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var fromFlag string
+
 var cmdRemove = &cobra.Command{
-	Use:   "remove",
-	Short: "Remove a mail redirection",
-	Long:  `This command remove a mail redirection using OVH Provider.`,
-	Args: func(cmd *cobra.Command, args []string) error {
-		if strings.TrimSpace(OptFrom) == "" {
-			return errors.New("missing argument From")
-		}
-		return nil
-	},
+	Use:       "remove",
+	Short:     "Remove a mail redirection",
+	ValidArgs: []string{"--from="},
 	Run: func(cmd *cobra.Command, args []string) {
 		ids := []string{}
 		if err := OvhClient.Get(fmt.Sprintf("/email/domain/%s/redirection?from=%s&to=%s", Domain, url.QueryEscape(OptFrom), url.QueryEscape(OptTo)), &ids); err != nil {
@@ -47,5 +42,28 @@ var cmdRemove = &cobra.Command{
 }
 
 func init() {
+	cmdRemove.PersistentFlags().StringVar(&fromFlag, "from", "", "Name of redirection")
+	cmdRemove.MarkFlagRequired("from")
+	cmdRemove.RegisterFlagCompletionFunc("from", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+		redirections, _ := ListRedirection("", "")
+		strArray := make([]string, len(redirections))
+		for i, arg := range redirections {
+			strArray[i] = arg.From
+		}
+
+		prefixArray := make([]string, 0)
+		for _, str := range strArray {
+			if strings.HasPrefix(str, toComplete) {
+				prefixArray = append(prefixArray, str)
+			}
+		}
+
+		if len(prefixArray) > 0 {
+			return prefixArray, cobra.ShellCompDirectiveNoFileComp
+		} else {
+			return strArray, cobra.ShellCompDirectiveNoFileComp
+		}
+	})
+
 	RootCmd.AddCommand(cmdRemove)
 }

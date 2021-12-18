@@ -1,23 +1,16 @@
 package cmd
 
 import (
-	"errors"
 	"fmt"
-	"strings"
 
 	"github.com/spf13/cobra"
 )
 
 var cmdAdd = &cobra.Command{
-	Use:   "add",
-	Short: "Add a new mail redirection",
-	Long:  `This command add a new mail redirection using OVH Provider.`,
-	Args: func(cmd *cobra.Command, args []string) error {
-		if strings.TrimSpace(OptFrom) == "" || strings.TrimSpace(OptTo) == "" {
-			return errors.New("missing argument From and/or To")
-		}
-		return nil
-	},
+	Use:       "add",
+	Short:     "Add a new mail redirection",
+	ValidArgs: []string{"from", "to"},
+	Args:      cobra.ExactValidArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
 		type redirectionBody struct {
 			From      string `json:"from"`
@@ -51,5 +44,8 @@ var cmdAdd = &cobra.Command{
 }
 
 func init() {
+	cmdAdd.MarkFlagRequired("from")
+	cmdAdd.MarkFlagRequired("to")
+
 	RootCmd.AddCommand(cmdAdd)
 }

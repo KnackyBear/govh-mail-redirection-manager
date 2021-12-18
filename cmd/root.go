@@ -28,16 +28,16 @@ var (
 )
 
 var RootCmd = &cobra.Command{
-	Use:   "govh-mrm",
+	Use:   "govh-mrm [list|add|remove] --from=[MAIL] (--to=[MAIL])",
 	Short: "OVH Mail redirection manager",
 	Long:  `This application manage mail redirection for OVH ¨Provider.`,
 }
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.config/ovh/ovh.yaml)")
-	RootCmd.PersistentFlags().StringVar(&OptFrom, "from", "", "mail from")
-	RootCmd.PersistentFlags().StringVar(&OptTo, "to", "", "mail to")
+	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "Config file (default is $HOME/.config/ovh/ovh.yaml)")
+	//RootCmd.PersistentFlags().StringVar(&OptFrom, "from", "", "Name of redirection")
+	//RootCmd.PersistentFlags().StringVar(&OptTo, "to", "", "Email of redirection target")
 
 	viper.SetDefault("author", "Julien Vinet <contact@julienvinet.dev>")
 	viper.SetDefault("license", "GNU GENERAL PUBLIC LICENSE")
