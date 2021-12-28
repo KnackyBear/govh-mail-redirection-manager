@@ -1,27 +1,19 @@
 package cmd
 
 import (
-	"errors"
 	"fmt"
 	"net/url"
-	"strings"
 
 	"github.com/spf13/cobra"
 )
 
 var cmdRemove = &cobra.Command{
-	Use:   "remove",
-	Short: "Remove a mail redirection",
-	Long:  `This command remove a mail redirection using OVH Provider.`,
-	Args: func(cmd *cobra.Command, args []string) error {
-		if strings.TrimSpace(OptFrom) == "" {
-			return errors.New("missing argument From")
-		}
-		return nil
-	},
+	Use:               "remove",
+	Short:             "Remove a mail redirection",
+	ValidArgsFunction: cobra.NoFileCompletions,
 	Run: func(cmd *cobra.Command, args []string) {
 		ids := []string{}
-		if err := OvhClient.Get(fmt.Sprintf("/email/domain/%s/redirection?from=%s&to=%s", Domain, url.QueryEscape(OptFrom), url.QueryEscape(OptTo)), &ids); err != nil {
+		if err := OvhClient.Get(fmt.Sprintf("/email/domain/%s/redirection?from=%s", Domain, url.QueryEscape(fromFlag)), &ids); err != nil {
 			fmt.Printf("Error: %q\n", err)
 			return
 		}
@@ -47,5 +39,10 @@ var cmdRemove = &cobra.Command{
 }
 
 func init() {
+	cmdRemove.Flags().StringVar(&fromFlag, "from", "", "Email of redirection")
+	cmdRemove.MarkFlagRequired("from")
+	cmdRemove.RegisterFlagCompletionFunc("from", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+		return nil, cobra.ShellCompDirectiveNoFileComp
+	})
 	RootCmd.AddCommand(cmdRemove)
 }

@@ -11,34 +11,35 @@ import (
 )
 
 type config struct {
-	Endpoint          string
-	ApplicationKey    string
-	ApplicationSecret string
-	ConsumerKey       string
-	Domain            string
+	Endpoint          string // OVH Endpoint api
+	ApplicationKey    string // Application Key from OVH Api
+	ApplicationSecret string // Application Secret from OVH Api
+	ConsumerKey       string // Consumer Key from OVH Api
+	Domain            string // Your personal Domain
 }
 
 var (
-	cfgFile       string
-	OptFrom       string
-	OptTo         string
-	Domain        string
-	currentConfig config
-	OvhClient     *ovh.Client
+	cfgFile       string      // configuration filename
+	Domain        string      // Domain
+	currentConfig config      // current configuration
+	OvhClient     *ovh.Client // OVH Client
+	fromFlag      string      // Email of redirection
+	toFlag        string      // Email of destination
 )
 
 var RootCmd = &cobra.Command{
-	Use:   "govh-mrm",
-	Short: "OVH Mail redirection manager",
-	Long:  `This application manage mail redirection for OVH ¨Provider.`,
+	Use:                   "govh-mrm [list|add|remove] --from=[MAIL] (--to=[MAIL])",
+	Short:                 "OVH Mail redirection manager",
+	Long:                  `This application manage mail redirection for OVH ¨Provider.`,
+	DisableFlagsInUseLine: true,
+	CompletionOptions: cobra.CompletionOptions{
+		DisableDescriptions: true,
+	},
 }
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.config/ovh/ovh.yaml)")
-	RootCmd.PersistentFlags().StringVar(&OptFrom, "from", "", "mail from")
-	RootCmd.PersistentFlags().StringVar(&OptTo, "to", "", "mail to")
-
+	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "Config file (default is $HOME/.config/ovh/ovh.yaml)")
 	viper.SetDefault("author", "Julien Vinet <contact@julienvinet.dev>")
 	viper.SetDefault("license", "GNU GENERAL PUBLIC LICENSE")
 }
