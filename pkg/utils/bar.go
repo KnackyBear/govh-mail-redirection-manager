@@ -44,7 +44,7 @@ func (bar *Bar) Play(cur int64) {
 }
 
 func (bar *Bar) Finish() {
-	fmt.Println("\n")
+	fmt.Println("")
 }
 
 /*func main() {
