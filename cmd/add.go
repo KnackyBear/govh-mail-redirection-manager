@@ -7,10 +7,9 @@ import (
 )
 
 var cmdAdd = &cobra.Command{
-	Use:       "add",
-	Short:     "Add a new mail redirection",
-	ValidArgs: []string{"from", "to"},
-	Args:      cobra.ExactValidArgs(2),
+	Use:               "add",
+	Short:             "Add a new mail redirection",
+	ValidArgsFunction: cobra.NoFileCompletions,
 	Run: func(cmd *cobra.Command, args []string) {
 		type redirectionBody struct {
 			From      string `json:"from"`
@@ -28,8 +27,8 @@ var cmdAdd = &cobra.Command{
 		}
 
 		payload := redirectionBody{
-			From: OptFrom,
-			To:   OptTo,
+			From: fromFlag,
+			To:   toFlag,
 		}
 
 		response := redirectionResponse{}
@@ -44,8 +43,16 @@ var cmdAdd = &cobra.Command{
 }
 
 func init() {
+	cmdAdd.Flags().StringVar(&fromFlag, "from", "", "Email of redirection")
+	cmdAdd.Flags().StringVar(&toFlag, "to", "", "Email of destination")
 	cmdAdd.MarkFlagRequired("from")
 	cmdAdd.MarkFlagRequired("to")
+	cmdAdd.RegisterFlagCompletionFunc("from", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+		return nil, cobra.ShellCompDirectiveNoFileComp
+	})
+	cmdAdd.RegisterFlagCompletionFunc("to", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+		return nil, cobra.ShellCompDirectiveNoFileComp
+	})
 
 	RootCmd.AddCommand(cmdAdd)
 }

@@ -367,13 +367,26 @@ _govh-mrm_add()
     flags_with_completion=()
     flags_completion=()
 
+    flags+=("--from=")
+    two_word_flags+=("--from")
+    flags_with_completion+=("--from")
+    flags_completion+=("__govh-mrm_handle_go_custom_completion")
+    local_nonpersistent_flags+=("--from")
+    local_nonpersistent_flags+=("--from=")
+    flags+=("--to=")
+    two_word_flags+=("--to")
+    flags_with_completion+=("--to")
+    flags_completion+=("__govh-mrm_handle_go_custom_completion")
+    local_nonpersistent_flags+=("--to")
+    local_nonpersistent_flags+=("--to=")
     flags+=("--config=")
     two_word_flags+=("--config")
 
     must_have_one_flag=()
+    must_have_one_flag+=("--from=")
+    must_have_one_flag+=("--to=")
     must_have_one_noun=()
-    must_have_one_noun+=("from")
-    must_have_one_noun+=("to")
+    has_completion_function=1
     noun_aliases=()
 }
 
@@ -444,13 +457,24 @@ _govh-mrm_list()
     flags_with_completion=()
     flags_completion=()
 
+    flags+=("--from=")
+    two_word_flags+=("--from")
+    flags_with_completion+=("--from")
+    flags_completion+=("__govh-mrm_handle_go_custom_completion")
+    local_nonpersistent_flags+=("--from")
+    local_nonpersistent_flags+=("--from=")
+    flags+=("--to=")
+    two_word_flags+=("--to")
+    flags_with_completion+=("--to")
+    flags_completion+=("__govh-mrm_handle_go_custom_completion")
+    local_nonpersistent_flags+=("--to")
+    local_nonpersistent_flags+=("--to=")
     flags+=("--config=")
     two_word_flags+=("--config")
 
     must_have_one_flag=()
     must_have_one_noun=()
-    must_have_one_noun+=("from")
-    must_have_one_noun+=("to")
+    has_completion_function=1
     noun_aliases=()
 }
 
@@ -472,12 +496,15 @@ _govh-mrm_remove()
     two_word_flags+=("--from")
     flags_with_completion+=("--from")
     flags_completion+=("__govh-mrm_handle_go_custom_completion")
+    local_nonpersistent_flags+=("--from")
+    local_nonpersistent_flags+=("--from=")
     flags+=("--config=")
     two_word_flags+=("--config")
 
     must_have_one_flag=()
+    must_have_one_flag+=("--from=")
     must_have_one_noun=()
-    must_have_one_noun+=("--from=")
+    has_completion_function=1
     noun_aliases=()
 }
 
