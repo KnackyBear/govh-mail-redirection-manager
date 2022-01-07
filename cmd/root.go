@@ -11,16 +11,16 @@ import (
 )
 
 type config struct {
-	Endpoint          string // OVH Endpoint api
-	ApplicationKey    string // Application Key from OVH Api
-	ApplicationSecret string // Application Secret from OVH Api
-	ConsumerKey       string // Consumer Key from OVH Api
-	Domain            string // Your personal Domain
+	Endpoint          string   // OVH Endpoint api
+	ApplicationKey    string   // Application Key from OVH Api
+	ApplicationSecret string   // Application Secret from OVH Api
+	ConsumerKey       string   // Consumer Key from OVH Api
+	Domain            []string // Your personal Domains
 }
 
 var (
 	cfgFile       string      // configuration filename
-	Domain        string      // Domain
+	Domain        string      // Current Domain
 	currentConfig config      // current configuration
 	OvhClient     *ovh.Client // OVH Client
 	fromFlag      string      // Email of redirection
@@ -28,7 +28,7 @@ var (
 )
 
 var RootCmd = &cobra.Command{
-	Use:                   "govh-mrm [list|add|remove] --from=[MAIL] (--to=[MAIL])",
+	Use:                   "govh-mrm [list|add|remove] --from=[MAIL] (--to=[MAIL]) (--config=[FILENAME]) (--domain=[DOMAIN])",
 	Short:                 "OVH Mail redirection manager",
 	Long:                  `This application manage mail redirection for OVH ¨Provider.`,
 	DisableFlagsInUseLine: true,
@@ -40,6 +40,7 @@ var RootCmd = &cobra.Command{
 func init() {
 	cobra.OnInitialize(initConfig)
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "Config file (default is $HOME/.config/ovh/ovh.yaml)")
+	RootCmd.PersistentFlags().StringVar(&Domain, "domain", "", "Domain to use (default is the first in config file)")
 	viper.SetDefault("author", "Julien Vinet <contact@julienvinet.dev>")
 	viper.SetDefault("license", "GNU GENERAL PUBLIC LICENSE")
 }
@@ -85,7 +86,11 @@ func initConfig() {
 		currentConfig.ApplicationSecret,
 		currentConfig.ConsumerKey,
 	)
-	Domain = currentConfig.Domain
+
+	if len(currentConfig.Domain) == 0 && Domain == "" {
+		fmt.Println("Error reading configuration : no domain found !")
+		os.Exit(1)
+	}
 }
 
 func Execute() {

@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -10,7 +11,7 @@ var cmdAdd = &cobra.Command{
 	Use:               "add",
 	Short:             "Add a new mail redirection",
 	ValidArgsFunction: cobra.NoFileCompletions,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		type redirectionBody struct {
 			From      string `json:"from"`
 			To        string `json:"to"`
@@ -33,12 +34,24 @@ var cmdAdd = &cobra.Command{
 
 		response := redirectionResponse{}
 
-		if err := OvhClient.Post(fmt.Sprintf("/email/domain/%s/redirection", Domain), payload, &response); err != nil {
-			fmt.Printf("Error: %q\n", err)
-			return
+		var domain string
+		if Domain == "" {
+			email := strings.Split(fromFlag, "@")
+			if len(email) == 2 {
+				domain = email[1]
+			} else {
+				return fmt.Errorf("Domain not found in %v", fromFlag)
+			}
+		} else {
+			domain = Domain
+		}
+
+		if err := OvhClient.Post(fmt.Sprintf("/email/domain/%s/redirection", domain), payload, &response); err != nil {
+			return fmt.Errorf("error: %q", err)
 		}
 
 		fmt.Printf("New redirection from '%s' to '%s' added.", payload.From, payload.To)
+		return nil
 	},
 }
 
