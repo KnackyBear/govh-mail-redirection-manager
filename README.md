@@ -60,7 +60,7 @@ To remove a redirection
 
 ## Author
 
-Julien Vinet <contact@julienvinet.dev>
+Julien Vinet <julien@vinet.dev>
 
 ## License
 
