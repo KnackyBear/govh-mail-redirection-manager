@@ -18,7 +18,9 @@ Endpoint: your_endpoint (ie. ovh-eu)
 ApplicationKey: your_application_key
 ApplicationSecret: your_application_secret
 ConsumerKey: your_consumer_key
-Domain: yourdomain.com
+Domain: 
+  - yourdomain.com
+  - yourotherdomain.com
 ```
 
 To create your APIKeys, follow the link : https://eu.api.ovh.com/createToken/
