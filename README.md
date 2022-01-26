@@ -45,18 +45,20 @@ To list current redirection
 
 You can filter the list by source and destination mail
 ```
-    govh-mrm list --from <mail source> --to <mail destination>
+    govh-mrm list --from <redirection mail> --to <destination mail>
 ```
 
 To add a new redirection
 ```
-    govh-mrm add --from <mail source> --to <mail destination>
+    govh-mrm add <redirection mail> <destination mail>
 ```
 
 To remove a redirection
 ```
-    govh-mrm remove --from <mail source>
+    govh-mrm remove <redirection mail>
 ```
+
+**Note : The redirection's mail and the destination's mail must belong to domain arrays in configuration file.**
 
 ## Author
 
