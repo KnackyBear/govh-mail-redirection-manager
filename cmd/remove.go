@@ -3,31 +3,33 @@ package cmd
 import (
 	"fmt"
 	"net/url"
-	"strings"
 
+	"github.com/julienvinet/govh-mrm/pkg/utils"
 	"github.com/spf13/cobra"
 )
 
 var cmdRemove = &cobra.Command{
-	Use:               "remove",
+	Use:               "remove <redirection mail>",
 	Short:             "Remove a mail redirection",
+	Args:              cobra.ExactArgs(1),
 	ValidArgsFunction: cobra.NoFileCompletions,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ids := []string{}
 
 		var domain string
+		var err error
 		if Domain == "" {
-			email := strings.Split(fromFlag, "@")
-			if len(email) == 2 {
-				domain = email[1]
-			} else {
-				return fmt.Errorf("Domain not found in %v", fromFlag)
+			if domain, err = utils.GetDomain(args[0]); err != nil {
+				return err
+			}
+			if !utils.StrArrayContains(currentConfig.Domain, domain) {
+				return fmt.Errorf("Unknown domain %v", domain)
 			}
 		} else {
 			domain = Domain
 		}
 
-		if err := OvhClient.Get(fmt.Sprintf("/email/domain/%s/redirection?from=%s", domain, url.QueryEscape(fromFlag)), &ids); err != nil {
+		if err := OvhClient.Get(fmt.Sprintf("/email/domain/%s/redirection?from=%s", domain, url.QueryEscape(args[0])), &ids); err != nil {
 			return fmt.Errorf("error: %q", err)
 		}
 
@@ -43,9 +45,9 @@ var cmdRemove = &cobra.Command{
 		for _, id := range ids {
 			response := redirectionResponse{}
 			if err := OvhClient.Delete(fmt.Sprintf("/email/domain/%s/redirection/%s", domain, id), &response); err != nil {
-				fmt.Printf("Can't delete redirection %s !", id)
+				fmt.Printf("Can't delete redirection %s (%s) !", args[0], id)
 			} else {
-				fmt.Printf("Redirection %s deleted.", id)
+				fmt.Printf("Redirection %s (%s) deleted.", args[0], id)
 			}
 		}
 		return nil
@@ -53,10 +55,5 @@ var cmdRemove = &cobra.Command{
 }
 
 func init() {
-	cmdRemove.Flags().StringVar(&fromFlag, "from", "", "Email of redirection")
-	cmdRemove.MarkFlagRequired("from")
-	cmdRemove.RegisterFlagCompletionFunc("from", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-		return nil, cobra.ShellCompDirectiveNoFileComp
-	})
 	RootCmd.AddCommand(cmdRemove)
 }
