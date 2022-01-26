@@ -2,14 +2,15 @@ package cmd
 
 import (
 	"fmt"
-	"strings"
 
+	"github.com/julienvinet/govh-mrm/pkg/utils"
 	"github.com/spf13/cobra"
 )
 
 var cmdAdd = &cobra.Command{
-	Use:               "add",
+	Use:               "add <redirection mail> <destination mail>",
 	Short:             "Add a new mail redirection",
+	Args:              cobra.ExactArgs(2),
 	ValidArgsFunction: cobra.NoFileCompletions,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		type redirectionBody struct {
@@ -28,19 +29,21 @@ var cmdAdd = &cobra.Command{
 		}
 
 		payload := redirectionBody{
-			From: fromFlag,
-			To:   toFlag,
+			From: args[0],
+			To:   args[1],
 		}
 
 		response := redirectionResponse{}
 
 		var domain string
+		var err error
+
 		if Domain == "" {
-			email := strings.Split(fromFlag, "@")
-			if len(email) == 2 {
-				domain = email[1]
-			} else {
-				return fmt.Errorf("Domain not found in %v", fromFlag)
+			if domain, err = utils.GetDomain(payload.From); err != nil {
+				return err
+			}
+			if !utils.StrArrayContains(currentConfig.Domain, domain) {
+				return fmt.Errorf("Unknown domain %v", domain)
 			}
 		} else {
 			domain = Domain
@@ -56,16 +59,5 @@ var cmdAdd = &cobra.Command{
 }
 
 func init() {
-	cmdAdd.Flags().StringVar(&fromFlag, "from", "", "Email of redirection")
-	cmdAdd.Flags().StringVar(&toFlag, "to", "", "Email of destination")
-	cmdAdd.MarkFlagRequired("from")
-	cmdAdd.MarkFlagRequired("to")
-	cmdAdd.RegisterFlagCompletionFunc("from", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-		return nil, cobra.ShellCompDirectiveNoFileComp
-	})
-	cmdAdd.RegisterFlagCompletionFunc("to", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-		return nil, cobra.ShellCompDirectiveNoFileComp
-	})
-
 	RootCmd.AddCommand(cmdAdd)
 }

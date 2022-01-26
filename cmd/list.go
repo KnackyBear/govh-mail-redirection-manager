@@ -85,8 +85,8 @@ func ListRedirection(from string, to string, domains []string) ([]RedirectionAcc
 }
 
 func init() {
-	cmdList.Flags().StringVar(&fromFlag, "from", "", "Email of redirection")
-	cmdList.Flags().StringVar(&toFlag, "to", "", "Email of destination")
+	cmdList.Flags().StringVarP(&fromFlag, "from", "f", "", "Email of redirection")
+	cmdList.Flags().StringVarP(&toFlag, "to", "t", "", "Email of destination")
 	cmdList.RegisterFlagCompletionFunc("from", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 		return nil, cobra.ShellCompDirectiveNoFileComp
 	})
